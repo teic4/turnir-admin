@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey"
+    tools:context=".UpravljajUtakmicamaActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/dark_grey">
+
+        <TextView
+            android:id="@+id/textViewDodajUtakmicu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Zakaži utakmicu"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+        <View
+            android:id="@+id/ViewHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/textViewDodajUtakmicu"
+            android:layout_marginTop="2dp"
+            android:background="@color/grey" />
+
+
+        <TextView
+            android:id="@+id/tvTeam1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ViewHorizontal"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="20dp"
+            android:text="Ekipa 1"
+            android:textColor="@color/grey"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinnerTeam1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTeam1"
+            android:layout_alignStart="@id/tvTeam1"
+            android:spinnerMode="dropdown"
+            android:theme="@style/customSpinnerDialog"
+            android:background="@null"/>
+
+
+        <TextView
+            android:id="@+id/tvTeam2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ViewHorizontal"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="50dp"
+            android:text="Ekipa 2"
+            android:textColor="@color/grey"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinnerTeam2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTeam2"
+            android:layout_alignStart="@id/tvTeam2"
+            android:spinnerMode="dropdown"
+            android:theme="@style/customSpinnerDialog"
+            android:background="@null"/>
+
+
+        <TextView
+            android:id="@+id/tvDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerTeam1"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="30dp"
+            android:text="Dan"
+            android:textColor="@color/grey"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinnerDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvDay"
+            android:layout_marginStart="50dp"
+            android:theme="@style/customSpinnerDialog"
+            android:background="@null"/>
+
+
+        <TextView
+            android:id="@+id/tvMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerTeam1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="Mjesec"
+            android:textColor="@color/grey"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinnerMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvDay"
+           android:layout_centerHorizontal="true"
+            android:theme="@style/customSpinnerDialog"
+            android:background="@null"/>
+
+        <TextView
+            android:id="@+id/tvYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerTeam1"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="50dp"
+            android:text="Godina"
+            android:textColor="@color/grey"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinnerYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvYear"
+            android:layout_alignStart="@id/tvYear"
+            android:layout_marginTop="10dp"
+            android:entries="@array/years"
+            android:theme="@style/customSpinnerDialog"
+            android:background="@null"/>
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerMonth"
+            android:layout_centerHorizontal="true"
+            android:text="Vrijeme"
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            android:layout_marginTop="20dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTime"
+            android:layout_alignStart="@id/tvTime"
+            android:layout_marginStart="-30dp"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:entries="@array/hours"
+            android:theme="@style/customSpinnerDialog" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTime"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text=":"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <Spinner
+            android:id="@+id/spinnerMinutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTime"
+            android:layout_alignEnd="@id/tvTime"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="-30dp"
+            android:background="@null"
+            android:entries="@array/minutes"
+            android:theme="@style/customSpinnerDialog" />
+
+
+        <Button
+            android:id="@+id/btnAddGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerHour"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Zakaži utakmicu"
+            android:textAllCaps="false" />
+
+        <View
+            android:id="@+id/ViewHorizontal2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/btnAddGame"
+            android:layout_marginTop="2dp"
+            android:background="@color/white" />
+
+        <TextView
+            android:id="@+id/tvEditGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ViewHorizontal2"
+            android:text="Uredi utakmicu"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+
+        <View
+            android:id="@+id/ViewHorizontal3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/tvEditGame"
+            android:layout_marginTop="2dp"
+            android:background="@color/grey"/>
+
+        <TextView
+            android:id="@+id/tvChooseGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Odaberi utakmicu"
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            android:layout_below="@id/ViewHorizontal3"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="50dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tvChooseGame"
+            android:layout_below="@id/ViewHorizontal3"
+            android:layout_marginTop="10dp"
+            android:theme="@style/customSpinnerDialog"
+            android:layout_marginStart="40dp"
+            android:background="@null"/>
+
+    </RelativeLayout>
+</ScrollView>

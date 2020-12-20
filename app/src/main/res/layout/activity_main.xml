@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="Upravljaj ekipama"
+       android:layout_marginEnd="20dp"
+       android:layout_marginStart="20dp"
+       android:layout_marginTop="10dp"
+       android:id="@+id/upravljajEkipama"/>
+
+    <Button
+        android:id="@+id/upravljajIgracima"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upravljaj igračima"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/upravljajEkipama"/>
+
+    <Button
+        android:id="@+id/upravljajUtakmicama"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upravljaj Utakmicama"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/upravljajIgracima"/>
+
+</RelativeLayout>

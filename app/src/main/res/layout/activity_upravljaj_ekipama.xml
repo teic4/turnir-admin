@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constaintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey"
+    tools:context=".UpravljajEkipamaActivity">
+
+
+    <EditText
+        android:id="@+id/etAddTeam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:hint="Ime ekipe"
+        android:inputType="textPersonName"
+        android:textColor="@color/white"
+        android:textColorHint="@color/grey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnAddTeam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:text="Dodaj ekipu"
+        app:layout_constraintBottom_toBottomOf="@+id/etAddTeam"
+        app:layout_constraintStart_toEndOf="@+id/etAddTeam"
+        app:layout_constraintTop_toTopOf="@+id/etAddTeam" />
+
+    <Spinner
+        android:id="@+id/spinnerTeams"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:backgroundTint="@color/grey"
+        android:theme="@style/customSpinnerDialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etAddTeam"/>
+
+    <Button
+        android:id="@+id/btnDeleteTeam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="40dp"
+        android:text="Izbrisi ekipu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerTeams" />
+
+    <EditText
+        android:id="@+id/etChangeTeamName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:hint="Promijeni ime"
+        android:inputType="textPersonName"
+        android:textColor="@color/white"
+        android:textColorHint="@color/grey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDeleteTeam" />
+
+    <Button
+        android:id="@+id/btnChangeTeamName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:text="promijeni"
+        app:layout_constraintBottom_toBottomOf="@+id/etChangeTeamName"
+        app:layout_constraintStart_toEndOf="@+id/etChangeTeamName"
+        app:layout_constraintTop_toTopOf="@+id/etChangeTeamName" />
+</androidx.constraintlayout.widget.ConstraintLayout>

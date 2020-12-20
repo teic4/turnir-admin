@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "2555206059",
+    "firebase_url": "https://turnir-13bdc-default-rtdb.firebaseio.com",
+    "project_id": "turnir-13bdc",
+    "storage_bucket": "turnir-13bdc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2555206059:android:74f6a9e587668f4fbe5aee",
+        "android_client_info": {
+          "package_name": "com.example.turniradmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2555206059-fn749dik2r0r6ec59rnil93k9sj43grb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxgSaXCOdj3eLddiwv-i1GX_WTyiqETnU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2555206059-fn749dik2r0r6ec59rnil93k9sj43grb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2555206059:android:80bfa9732a4826b5be5aee",
+        "android_client_info": {
+          "package_name": "com.example.turniraplikacija"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2555206059-fn749dik2r0r6ec59rnil93k9sj43grb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxgSaXCOdj3eLddiwv-i1GX_WTyiqETnU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2555206059-fn749dik2r0r6ec59rnil93k9sj43grb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
