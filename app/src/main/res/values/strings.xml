@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">turnir admin</string>
 
+    <string-array name="events">
+        <item>-</item>
+        <item>Gol</item>
+        <item>Auto gol</item>
+        <item>Zuti karton</item>
+        <item>Crveni karton</item>
+    </string-array>
+
     <string-array name="minutes">
         <item>00</item>
         <item>05</item>

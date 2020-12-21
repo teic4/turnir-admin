@@ -116,7 +116,6 @@ public class UpravljajIgracimaActivity extends AppCompatActivity {
                             }
                             ArrayAdapter<String> adapterPlayers = new ArrayAdapter<>(UpravljajIgracimaActivity.this, android.R.layout.simple_spinner_dropdown_item, playersName);
                             spinnerPlayer.setAdapter(adapterPlayers);
-                            Toast.makeText(UpravljajIgracimaActivity.this, players.get(0).getName(), Toast.LENGTH_SHORT).show();
 
                             if(players.size() == 0) {
                                 etName.setText("");
