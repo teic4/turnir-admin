@@ -262,7 +262,6 @@ public class UpravljajIgracimaActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
                                     Player player_to_del = players.get(index);
-                                    Toast.makeText(UpravljajIgracimaActivity.this, players.get(index).getName(), Toast.LENGTH_SHORT).show();
                                     players.remove(index);
                                     for(Player p : players){
                                         p.setId(players.indexOf(p));

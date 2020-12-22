@@ -12,10 +12,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,13 +27,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 public class UpravljajUtakmicamaActivity extends AppCompatActivity {
-    Spinner spinnerTeam1, spinnerTeam2, spinnerDay, spinnerMonth, spinnerYear, spinnerHour, spinnerMinutes, spinnerGame, spinnerTeam1Players, spinnerTeam2Players, spinnerEvent1, spinnerEvent2;
-    Button btnAddGame, btnAddEvent, btnSaveGame;
+    Spinner spinnerTeam1, spinnerTeam2, spinnerDay, spinnerMonth, spinnerYear, spinnerHour, spinnerMinutes, spinnerGame, spinnerTeam1Players, spinnerTeam2Players;
+    Spinner spinnerEvent1, spinnerEvent2, spinnerEvents, spinnerPlayers, spinnerChangeEvent;
+    Button btnAddGame, btnAddEvent, btnSaveGame, btnDeleteEvent;
     TextView textVTeam1, textVTeam2;
     EditText etTeam1Goals, etTeam2Goals;
+    RelativeLayout relLayout;
     long maxID = 0;
     int gameIndex = 0;
 
@@ -72,6 +75,7 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
             }
         });
 
+
         referenceTeams.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -85,8 +89,6 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                     spinnerTeam1.setAdapter(adapter);
                     spinnerTeam2.setAdapter(adapter);
 
-
-
                 }catch (Exception e){
                     Toast.makeText(UpravljajUtakmicamaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -98,6 +100,8 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         btnAddGame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +120,8 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                 String time = hour + ":" + minutes;
                 String team1Goals = "0";
                 String team2Goals = "0";
+
+                //gameEvents za zakazat utakmicu
                 ArrayList<GameEvent> gameEvents = new ArrayList<>();
 
                 if(team1.equals(team2)){
@@ -129,6 +135,11 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
             }
         });
 
+
+        ArrayList<GameEvent> gameEvents = new ArrayList<>();
+        ArrayList<String> gameEventsNames = new ArrayList<>();
+
+
         spinnerGame.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -138,11 +149,18 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                 String team1 = teams[0].trim();
                 String team2 = teams[1].trim();
 
-                textVTeam1.setText(team1);
-                textVTeam2.setText(team2);
+                Game game = games.get(gameIndex);
+                etTeam1Goals.setText(game.getTeam1Goals());
+                etTeam2Goals.setText(game.getTeam2Goals());
+
 
                 ArrayList<String> team1_players = new ArrayList<>();
                 ArrayList<String> team2_players = new ArrayList<>();
+                ArrayList<String> playersFromBothTeams = new ArrayList<>();
+
+
+                textVTeam1.setText(team1);
+                textVTeam2.setText(team2);
 
 
                 Query query1 = referencePlayers.orderByChild("team_name").equalTo(team1);
@@ -154,9 +172,11 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                                 Player player = dataSnapshot.getValue(Player.class);
                                 team1_players.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
+                                playersFromBothTeams.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
                             }
                             ArrayAdapter<String> team1Adapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, team1_players);
                             spinnerTeam1Players.setAdapter(team1Adapter);
+
 
                         }catch (Exception e){
                             Toast.makeText(UpravljajUtakmicamaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -171,6 +191,7 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                 });
 
 
+
                 Query query2 = referencePlayers.orderByChild("team_name").equalTo(team2);
                 query2.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -180,9 +201,41 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                                 Player player = dataSnapshot.getValue(Player.class);
                                 team2_players.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
+                                playersFromBothTeams.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
                             }
                             ArrayAdapter<String> team2Adapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, team2_players);
                             spinnerTeam2Players.setAdapter(team2Adapter);
+                            ArrayAdapter<String> allPlayersAdapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, playersFromBothTeams);
+                            spinnerPlayers.setAdapter(allPlayersAdapter);
+
+                        }catch (Exception e){
+                            Toast.makeText(UpravljajUtakmicamaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(UpravljajUtakmicamaActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+
+                referenceGames.child(gameIndex + "").child("GameEvents").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        try {
+                            gameEventsNames.clear();
+                            gameEvents.clear();
+                            for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                                GameEvent gameEvent = dataSnapshot.getValue(GameEvent.class);
+                                gameEvents.add(gameEvent);
+                                gameEventsNames.add(gameEvent.getEvent() + " - " + gameEvent.getScorerID());
+                            }
+                            ArrayAdapter<String> gameEventNamesAdapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, gameEventsNames);
+                            spinnerEvents.setAdapter(gameEventNamesAdapter);
+
                         }catch (Exception e){
                             Toast.makeText(UpravljajUtakmicamaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -201,9 +254,6 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
 
             }
         });
-
-
-        ArrayList<GameEvent> gameEvents = new ArrayList<>();
 
 
         btnAddEvent.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +279,8 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
 
                     spinnerEvent2.setSelection(0);
                 }
+
+
                 
             }
         });
@@ -238,6 +290,8 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String team1Goals = etTeam1Goals.getText().toString();
                 String team2Goals = etTeam2Goals.getText().toString();
+                String changeEventTo = spinnerChangeEvent.getSelectedItem().toString();
+                
                 
                 if(team1Goals.equals("") || Integer.parseInt(team1Goals) < 0 || team2Goals.equals("") || Integer.parseInt(team2Goals) < 0){
                     Toast.makeText(UpravljajUtakmicamaActivity.this, "Krivo ste unijeli rezultat", Toast.LENGTH_SHORT).show();
@@ -245,15 +299,56 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                     referenceGames.child(gameIndex + "").child("team1Goals").setValue(team1Goals);
                     referenceGames.child(gameIndex + "").child("team2Goals").setValue(team2Goals);
 
-                    referenceGames.child(gameIndex + "").child("GameEvents").setValue(gameEvents);
+
+                    if(gameEventsNames.size() > 0){
+                        int index = gameEventsNames.indexOf(spinnerEvents.getSelectedItem().toString());
+                        GameEvent gameEvent = gameEvents.get(index);
+
+                        if(!changeEventTo.equals("-")){
+                            gameEvent.setEvent(changeEventTo);
+                        }
+
+                        String scorerID = spinnerPlayers.getSelectedItem().toString();
+                        gameEvent.setScorerID(scorerID);
+                        referenceGames.child(gameIndex + "").child("GameEvents").setValue(gameEvents);
+
+                    }else{
+
+                        referenceGames.child(gameIndex + "").child("GameEvents").setValue(gameEvents);
+                    }
 
                 }
             }
         });
 
+        btnDeleteEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameEventsNames.size() > 0){
+                    Snackbar.make(relLayout, "Zelite li izbrisati događaj", Snackbar.LENGTH_LONG)
+                            .setAction("DA", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    int index = gameEventsNames.indexOf(spinnerEvents.getSelectedItem().toString());
+                                    GameEvent gameEvent = gameEvents.get(index);
+
+                                    gameEvents.remove(gameEvent);
+                                    referenceGames.child(gameIndex + "").child("GameEvents").setValue(gameEvents);
+                                }
+                            }).setActionTextColor(getResources().getColor(android.R.color.holo_blue_bright)).show();
+
+                }else{
+                    Toast.makeText(UpravljajUtakmicamaActivity.this, "Odaberi događaj", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
     }
+
+
+
+
 
     private void assignViews(){
         spinnerTeam1 = findViewById(R.id.spinnerTeam1);
@@ -268,16 +363,22 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
         spinnerTeam2Players = findViewById(R.id.spinnerTeam2Players);
         spinnerEvent1 = findViewById(R.id.spinnerEvent1);
         spinnerEvent2 = findViewById(R.id.spinnerEvent2);
+        spinnerEvents = findViewById(R.id.spinnerEvents);
+        spinnerPlayers = findViewById(R.id.spinnerPlayers);
+        spinnerChangeEvent = findViewById(R.id.spinnerChangeEvent);
 
         btnAddGame = findViewById(R.id.btnAddGame);
         btnAddEvent = findViewById(R.id.btnAddEvent);
         btnSaveGame = findViewById(R.id.btnSaveGame);
+        btnDeleteEvent = findViewById(R.id.btnDeleteEvent);
 
         textVTeam1 = findViewById(R.id.textVTeam1);
         textVTeam2 = findViewById(R.id.textVTeam2);
 
         etTeam1Goals = findViewById(R.id.etTeam1Goals);
         etTeam2Goals = findViewById(R.id.etTeam2Goals);
+
+        relLayout = findViewById(R.id.relLayout);
 
         //SPINERS
         ArrayList<String> days = new ArrayList<>();
@@ -387,7 +488,41 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
             }
         });
 
+        spinnerEvents.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spinnerPlayers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spinnerChangeEvent.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     //Back navigation bar button
