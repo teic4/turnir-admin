@@ -1,6 +1,7 @@
 package com.example.turniradmin;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +34,7 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
     Spinner spinnerTeam1, spinnerTeam2, spinnerDay, spinnerMonth, spinnerYear, spinnerHour, spinnerMinutes, spinnerGame, spinnerTeam1Players, spinnerTeam2Players;
     Spinner spinnerEvent1, spinnerEvent2, spinnerEvents, spinnerPlayers, spinnerChangeEvent;
     Button btnAddGame, btnAddEvent, btnSaveGame, btnDeleteEvent;
-    TextView textVTeam1, textVTeam2;
+    TextView textVTeam1, textVTeam2, tvEditEvent, tvChoosePlayer, tvChangeEvent;
     EditText etTeam1Goals, etTeam2Goals;
     RelativeLayout relLayout;
     long maxID = 0;
@@ -62,8 +64,9 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                 games.clear();
                 gamesTeams.clear();
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    games.add(dataSnapshot.getValue(Game.class));
-                    gamesTeams.add(dataSnapshot.child("team1").getValue(String.class) + " - " + dataSnapshot.child("team2").getValue(String.class));
+                    Game game = dataSnapshot.getValue(Game.class);
+                    games.add(game);
+                    gamesTeams.add(game.getTeam1() + " - " + game.getTeam2());
                 }
                 ArrayAdapter<String> adapterGames = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, gamesTeams);
                 spinnerGame.setAdapter(adapterGames);
@@ -135,47 +138,66 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
             }
         });
 
+        //UREDI UTAKMICU
 
-        ArrayList<GameEvent> gameEvents = new ArrayList<>();
+
+        ArrayList<Player> playersFromBothTeams = new ArrayList<>();     //svi igraci iz oba tima
+        ArrayList<String> playersFromBothTeamsNames = new ArrayList<>();
+
+        ArrayList<Player> team1Players = new ArrayList<>();
+        ArrayList<String> team1PlayersNames = new ArrayList<>();
+
+        ArrayList<Player> team2Players = new ArrayList<>();
+        ArrayList<String> team2PlayersNames = new ArrayList<>();
+
+
+        ArrayList<GameEvent> gameEvents = new ArrayList<>();      //eventovi za odabrani game
         ArrayList<String> gameEventsNames = new ArrayList<>();
+
 
 
         spinnerGame.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
-                String teams[] = spinnerGame.getSelectedItem().toString().split("-", 2);
-                gameIndex = spinnerGame.getSelectedItemPosition();
-                String team1 = teams[0].trim();
-                String team2 = teams[1].trim();
 
+                gameIndex = spinnerGame.getSelectedItemPosition();
                 Game game = games.get(gameIndex);
+
+                String team1 = game.getTeam1();
+                String team2 = game.getTeam2();
+
                 etTeam1Goals.setText(game.getTeam1Goals());
                 etTeam2Goals.setText(game.getTeam2Goals());
-
-
-                ArrayList<String> team1_players = new ArrayList<>();
-                ArrayList<String> team2_players = new ArrayList<>();
-                ArrayList<String> playersFromBothTeams = new ArrayList<>();
-
 
                 textVTeam1.setText(team1);
                 textVTeam2.setText(team2);
 
 
+                //napuni spinnerTeam1Players i spinnerPlayers
                 Query query1 = referencePlayers.orderByChild("team_name").equalTo(team1);
                 query1.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         try {
-                            team1_players.clear();
+                            playersFromBothTeams.clear();
+                            playersFromBothTeamsNames.clear();
+
+                            team1Players.clear();
+                            team1PlayersNames.clear();
+
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                                 Player player = dataSnapshot.getValue(Player.class);
-                                team1_players.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
-                                playersFromBothTeams.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
+
+                                team1Players.add(player);
+                                team1PlayersNames.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
+
                             }
-                            ArrayAdapter<String> team1Adapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, team1_players);
+                            ArrayAdapter<String> team1Adapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, team1PlayersNames);
                             spinnerTeam1Players.setAdapter(team1Adapter);
+
+                            playersFromBothTeams.addAll(team1Players);
+                            playersFromBothTeamsNames.addAll(team1PlayersNames);
 
 
                         }catch (Exception e){
@@ -191,50 +213,79 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                 });
 
 
-
+                //napuni spinnerTeam2Players i spinnerPlayers
                 Query query2 = referencePlayers.orderByChild("team_name").equalTo(team2);
                 query2.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         try {
-                            team2_players.clear();
+                            team2Players.clear();
+                            team2PlayersNames.clear();
+
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                                 Player player = dataSnapshot.getValue(Player.class);
-                                team2_players.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
-                                playersFromBothTeams.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
+
+                                team2Players.add(player);
+                                team2PlayersNames.add(player.getName() + " " + player.getLast_name() + " (" + player.getNumber() + ")");
+
                             }
-                            ArrayAdapter<String> team2Adapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, team2_players);
+                            ArrayAdapter<String> team2Adapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, team2PlayersNames);
                             spinnerTeam2Players.setAdapter(team2Adapter);
-                            ArrayAdapter<String> allPlayersAdapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, playersFromBothTeams);
+
+                            ArrayAdapter<String> allPlayersAdapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, playersFromBothTeamsNames);
                             spinnerPlayers.setAdapter(allPlayersAdapter);
 
-                        }catch (Exception e){
-                            Toast.makeText(UpravljajUtakmicamaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(UpravljajUtakmicamaActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                            playersFromBothTeams.addAll(team2Players);
+                            playersFromBothTeamsNames.addAll(team2PlayersNames);
 
 
+                            //SVI EVENTOVI I IGRACI
+                            //moglo se i priko addValueEvent listenera ali radi manje potrosnje interneta izvlacin eventove iz games arraya
 
-
-                referenceGames.child(gameIndex + "").child("GameEvents").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        try {
-                            gameEventsNames.clear();
                             gameEvents.clear();
-                            for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                                GameEvent gameEvent = dataSnapshot.getValue(GameEvent.class);
-                                gameEvents.add(gameEvent);
-                                gameEventsNames.add(gameEvent.getEvent() + " - " + gameEvent.getScorerID());
+                            gameEventsNames.clear();
+                            Game selectedGame = games.get(gameIndex);
+                            ArrayList<GameEvent> selectedGameEvents = selectedGame.getGameEvents();
+
+                            if(selectedGameEvents != null){
+
+                                tvEditEvent.setVisibility(View.VISIBLE);
+                                spinnerEvents.setVisibility(View.VISIBLE);
+                                tvChoosePlayer.setVisibility(View.VISIBLE);
+                                spinnerPlayers.setVisibility(View.VISIBLE);
+                                tvChangeEvent.setVisibility(View.VISIBLE);
+                                spinnerChangeEvent.setVisibility(View.VISIBLE);
+                                btnDeleteEvent.setVisibility(View.VISIBLE);
+
+                                //samo puni isti array koji je izvan itemselectedlistenera zbog koda u btn save i btn addEvent click listeneru
+                                for (GameEvent gameEvent : selectedGameEvents){
+                                    gameEvents.add(gameEvent);
+                                }
+
+                                for (GameEvent gameEvent : selectedGameEvents){
+                                    long playerID = gameEvent.getScorerID();
+
+                                    for(Player p : playersFromBothTeams){
+                                        if(p.getId() == playerID){
+                                            Player player = p;
+                                            gameEventsNames.add(gameEvent.getEvent() + " - " + player.getName() + " " + player.getLast_name());
+                                        }
+                                    }
+
+                                }
+                                ArrayAdapter<String> gameEventNamesAdapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, gameEventsNames);
+                                spinnerEvents.setAdapter(gameEventNamesAdapter);
+                            }else{
+                                tvEditEvent.setVisibility(View.GONE);
+                                spinnerEvents.setVisibility(View.GONE);
+                                tvChoosePlayer.setVisibility(View.GONE);
+                                spinnerPlayers.setVisibility(View.GONE);
+                                tvChangeEvent.setVisibility(View.GONE);
+                                spinnerChangeEvent.setVisibility(View.GONE);
+                                btnDeleteEvent.setVisibility(View.GONE);
                             }
-                            ArrayAdapter<String> gameEventNamesAdapter = new ArrayAdapter<>(UpravljajUtakmicamaActivity.this, android.R.layout.simple_spinner_dropdown_item, gameEventsNames);
-                            spinnerEvents.setAdapter(gameEventNamesAdapter);
+
+
 
                         }catch (Exception e){
                             Toast.makeText(UpravljajUtakmicamaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -255,33 +306,34 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
             }
         });
 
-
         btnAddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String event1 = spinnerEvent1.getSelectedItem().toString();
                 String event2 = spinnerEvent2.getSelectedItem().toString();
 
-                if(!event1.equals("-")){
-                    String player = spinnerTeam1Players.getSelectedItem().toString();
-                    String team = spinnerTeam1.getSelectedItem().toString();
-                    GameEvent gameEvent = new GameEvent(player, event1, team);
+                if(spinnerEvent1.getSelectedItemPosition() != 0){
+                    int index = spinnerTeam1Players.getSelectedItemPosition();
+                    String team = textVTeam1.getText().toString();
+                    long player_id = team1Players.get(index).getId();
+
+                    GameEvent gameEvent = new GameEvent(player_id, event1, team);
                     gameEvents.add(gameEvent);
 
                     spinnerEvent1.setSelection(0);
                 }
 
-                if(!event2.equals("-")){
-                    String player = spinnerTeam2Players.getSelectedItem().toString();
-                    String team = spinnerTeam2.getSelectedItem().toString();
-                    GameEvent gameEvent = new GameEvent(player, event2, team);
+                if(spinnerEvent2.getSelectedItemPosition() != 0){
+                    String team = textVTeam2.getText().toString();
+                    int index = spinnerTeam2Players.getSelectedItemPosition();
+                    long player_id = team2Players.get(index).getId();
+
+                    GameEvent gameEvent = new GameEvent(player_id, event2, team);
                     gameEvents.add(gameEvent);
 
                     spinnerEvent2.setSelection(0);
                 }
 
-
-                
             }
         });
         
@@ -308,13 +360,17 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
                             gameEvent.setEvent(changeEventTo);
                         }
 
-                        String scorerID = spinnerPlayers.getSelectedItem().toString();
+                        referenceGames.child(gameIndex + "").child("played").setValue(true);
+                        int indexPlayer = spinnerPlayers.getSelectedItemPosition();
+
+                        long scorerID = playersFromBothTeams.get(indexPlayer).getId();
+
                         gameEvent.setScorerID(scorerID);
                         referenceGames.child(gameIndex + "").child("GameEvents").setValue(gameEvents);
 
                     }else{
-
                         referenceGames.child(gameIndex + "").child("GameEvents").setValue(gameEvents);
+                        referenceGames.child(gameIndex + "").child("played").setValue(true);
                     }
 
                 }
@@ -348,8 +404,6 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
 
 
 
-
-
     private void assignViews(){
         spinnerTeam1 = findViewById(R.id.spinnerTeam1);
         spinnerTeam2 = findViewById(R.id.spinnerTeam2);
@@ -374,6 +428,9 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
 
         textVTeam1 = findViewById(R.id.textVTeam1);
         textVTeam2 = findViewById(R.id.textVTeam2);
+        tvEditEvent = findViewById(R.id.tvEditEvent);
+        tvChoosePlayer = findViewById(R.id.tvChoosePlayer);
+        tvChangeEvent = findViewById(R.id.tvChangeEvent);
 
         etTeam1Goals = findViewById(R.id.etTeam1Goals);
         etTeam2Goals = findViewById(R.id.etTeam2Goals);
