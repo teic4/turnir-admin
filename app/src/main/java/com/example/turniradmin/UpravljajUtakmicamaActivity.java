@@ -403,7 +403,6 @@ public class UpravljajUtakmicamaActivity extends AppCompatActivity {
     }
 
 
-
     private void assignViews(){
         spinnerTeam1 = findViewById(R.id.spinnerTeam1);
         spinnerTeam2 = findViewById(R.id.spinnerTeam2);

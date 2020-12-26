@@ -38,6 +38,22 @@ public class Player {
         this.id = id;
     }
 
+    public void addGoals(int goals){
+        this.goals += goals;
+    }
+
+    public void addRedCard(){
+        this.red_cards += 1;
+    }
+
+    public void addYellowCards(int yellow_cards){
+        this.yellow_cards += yellow_cards;
+    }
+
+    public void addGame(){
+        this.number_of_games += 1;
+    }
+
     public long getId() {
         return id;
     }
